@@ -27,7 +27,9 @@ const rrdir = require('rrdir');
           if(!shouldSkip) {
             const cmd = `aws s3 ls s3://${s3bucket} --no-sign-request --summarize --human-readable --recursive > ${outputfile}`;
             console.log(cmd);
-            const output = await exec(cmd, { "shell": "/bin/bash" });
+            let output = await exec(cmd, { "shell": "/bin/bash" });
+            console.log(output);
+            output = await exec(`tail ${outputfile}`, { "shell": "/bin/bash" });
             console.log(output);
           }
           timeSpentInMs = performance.now() - timeSpentInMs;
