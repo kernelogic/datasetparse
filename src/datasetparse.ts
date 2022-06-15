@@ -24,7 +24,6 @@ const rrdir = require('rrdir');
             } catch (e) {
               console.log(e);
             }
-            break;
         }
     }
 })();
