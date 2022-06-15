@@ -1,0 +1,13 @@
+{
+  "name": "@kernelogic/datasetparse",
+  "description": "For Slingshot 3.0 use, go through each dataset on AWS open dataset and get related information.",
+  "dependencies": {
+    "await-exec": "^0.1.2",
+    "js-yaml": "^4.1.0",
+    "promise-mysql": "^5.2.0",
+    "rrdir": "^8.2.2"
+  },
+  "devDependencies": {
+    "typescript": "^4.7.3"
+  }
+}
