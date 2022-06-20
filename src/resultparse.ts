@@ -13,6 +13,8 @@ const filelineRegex = /\d{4}-\d{2}-\d{2}\s\S+\s+\S+\s\S+\s(.*)/;
 
 /**
  * This script take the input from datasetparse.ts and generate a csv report containing all datasets
+ * Usage: 
+ *  npx tsc && node dist/resultparse.js /tmp/odr/datasets /tmp/odr_result /tmp/alldataset.csv
  */
 (async () => {
     const csvObjects = [];
