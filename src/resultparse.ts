@@ -45,8 +45,6 @@ const filelineRegex = /\d{4}-\d{2}-\d{2}\s\S+\s+\S+\s\S+\s(.*)/;
                                     const lineMatch = line.match(filelineRegex);
                                     if (lineMatch != null && lineMatch.length > 1) {
                                         extensions.add(path.extname(lineMatch[1]))
-                                    } else {
-                                        console.debug(`Not a file: ${line}`);
                                     }
                                 });
                                 await events.once(rl, 'close');
