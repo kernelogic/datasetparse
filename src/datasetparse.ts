@@ -6,6 +6,8 @@ const rrdir = require('rrdir');
 /**
  * This script take the yaml files located at https://github.com/awslabs/open-data-registry/tree/main/datasets
  * and save all files and the total size into text files.
+ * Usage:
+ *  npx tsc && node dist/datasetparse.js /tmp/odr/datasets /tmp/odr_result
  */
 
 (async () => {
