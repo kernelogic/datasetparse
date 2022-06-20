@@ -3,6 +3,11 @@ const yaml = require('js-yaml');
 const fs = require('fs');
 const rrdir = require('rrdir');
 
+/**
+ * This script take the yaml files located at https://github.com/awslabs/open-data-registry/tree/main/datasets
+ * and save all files and the total size into text files.
+ */
+
 (async () => {
   for await (const file of rrdir(process.argv[2])) {
     if (file.path.endsWith('yaml')) {
@@ -41,3 +46,5 @@ const rrdir = require('rrdir');
     }
   }
 })();
+
+export {};
