@@ -50,6 +50,7 @@ const filelineRegex = /\d{4}-\d{2}-\d{2}\s\S+\s+\S+\s\S+\s(.*)/;
                                     }
                                 });
                                 await events.once(rl, 'close');
+                                
                                 csvObjects.push({
                                     name: doc.Name,
                                     description: doc.Description,
@@ -59,7 +60,7 @@ const filelineRegex = /\d{4}-\d{2}-\d{2}\s\S+\s+\S+\s\S+\s(.*)/;
                                     region: res.Region,
                                     numberOfFiles: countMatch[1],
                                     totalSize: sizeMatch[1],
-                                    extensions: Array.from(extensions).join(' ')
+                                    extensions: extensions.size <= 10 ? Array.from(extensions).join(' ') : `various ${extensions.size}`
                                 })
                             } else {
                                 console.error(`Incomplete txt file?`, output.stdout);
