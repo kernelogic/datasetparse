@@ -6,6 +6,7 @@ const events = require('events');
 const readline = require('readline');
 const path = require('path');
 const ObjectsToCsv: any = require('objects-to-csv');// no TS support
+const asyncsv: any = require('async-csv');
 
 const totalCountRegex = /Total Objects: (.*)/;
 const totalSizeRegex = /Total Size: (.*)/;
@@ -17,15 +18,30 @@ const filelineRegex = /\d{4}-\d{2}-\d{2}\s\S+\s+\S+\s\S+\s(.*)/;
  *  npx tsc && node dist/resultparse.js /tmp/odr/datasets /tmp/odr_result /tmp/alldataset.csv
  */
 (async () => {
-    const csvObjects = [];
+    let csvObjects = [];
+    try {
+        // Read file from disk:
+        console.log(process.argv);
+        const csvString = fs.readFileSync(process.argv[4], 'utf-8');
+        // Convert CSV string into rows:
+        csvObjects = await asyncsv.parse(csvString, {
+            columns: true
+        });
+    } catch (error) {
+        console.error(error);
+    }
     let timeSpentInMs = performance.now();
     for await (const file of rrdir(process.argv[2])) {
         if (file.path.endsWith('yaml')) {
             try {
                 const doc = yaml.load(fs.readFileSync(file.path, 'utf8'));
                 for (let i = 0; i < doc.Resources.length; i++) {
+                    const res = doc.Resources[i];
+                    if (csvObjects.filter(function(e: any) { return e.name === doc.Name; }).length > 0) {
+                        console.warn(`Dataset ${doc.Name} already in CSV, continue`);
+                        continue;
+                    }
                     try {
-                        const res = doc.Resources[i];
                         const s3bucket = res.ARN.substring(res.ARN.lastIndexOf(':') + 1);
                         const txtPath = process.argv[3] + '/' + s3bucket.replaceAll('/', '-') + '.txt';
                         console.log(`Probe ${txtPath}`);

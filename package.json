@@ -2,6 +2,7 @@
   "name": "@kernelogic/datasetparse",
   "description": "For Slingshot 3.0 use, go through each dataset on AWS open dataset and get related information.",
   "dependencies": {
+    "async-csv": "^2.1.3",
     "await-exec": "^0.1.2",
     "js-yaml": "^4.1.0",
     "objects-to-csv": "^1.3.6",
