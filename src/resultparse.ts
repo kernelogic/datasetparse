@@ -79,9 +79,7 @@ const filelineRegex = /\d{4}-\d{2}-\d{2}\s\S+\s+\S+\s\S+\s(.*)/;
                                     try {
                                         const s3bucket = res.ARN.substring(res.ARN.lastIndexOf(':') + 1);
                                         //process bucket like s3://aws-roda-hcls-datalake/thousandgenomes_dragen
-                                        const s3bucketSplit = s3bucket.split('/');
-                                        const s3bucketWithoutSubfolder = s3bucketSplit[0] + '//' + s3bucketSplit[2];
-                                        const cmd = `aws s3 cp s3://${s3bucketWithoutSubfolder}/${downloadCandidate} --no-sign-request /tmp`;
+                                        const cmd = `aws s3 cp s3://${s3bucket.split('/')[0]}/${downloadCandidate} --no-sign-request /tmp`;
                                         console.log(cmd);
                                         const output = await exec(cmd, { "shell": "/bin/bash" });
                                         console.log(output);
