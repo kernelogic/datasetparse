@@ -87,7 +87,7 @@ const filelineRegex = /\d{4}-\d{2}-\d{2}\s\S+\s+\S+\s\S+\s(.*)/;
                                         console.log(output);
                                         downloadable = true;
                                     } catch (error) {
-                                        console.warn(`Cannot download`, error)
+                                        console.error(`Cannot download`, error)
                                     }
                                 } else {
                                     console.warn(`No download candidate`)
