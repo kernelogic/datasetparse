@@ -37,7 +37,7 @@ const filelineRegex = /\d{4}-\d{2}-\d{2}\s\S+\s+\S+\s\S+\s(.*)/;
                 const doc = yaml.load(fs.readFileSync(file.path, 'utf8'));
                 for (let i = 0; i < doc.Resources.length; i++) {
                     const res = doc.Resources[i];
-                    if (csvObjects.filter(function(e: any) { return e.name === doc.Name; }).length > 0) {
+                    if (csvObjects.filter(function (e: any) { return e.name === doc.Name; }).length > 0) {
                         console.warn(`Dataset ${doc.Name} already in CSV, continue`);
                         continue;
                     }
@@ -59,19 +59,43 @@ const filelineRegex = /\d{4}-\d{2}-\d{2}\s\S+\s+\S+\s\S+\s(.*)/;
                                     input: fs.createReadStream(txtPath),
                                     crlfDelay: Infinity
                                 });
+                                let downloadCandidate: string | null = null;
                                 rl.on('line', (line: string) => {
-                                    const lineMatch = line.match(filelineRegex);
-                                    if (lineMatch != null && lineMatch.length > 1) {
-                                        extensions.add(path.extname(lineMatch[1]))
+                                    if (!line.endsWith('/')) { // not a folder
+                                        const lineMatch = line.match(filelineRegex);
+                                        if (lineMatch != null && lineMatch.length > 1) {
+                                            extensions.add(path.extname(lineMatch[1]))
+                                            if (!downloadCandidate) {
+                                                downloadCandidate = lineMatch[1];
+                                            }
+                                        }
                                     }
                                 });
                                 await events.once(rl, 'close');
-                                
+
+                                // attempt to download the first file with extension
+                                let downloadable = false;
+                                if (downloadCandidate) {
+                                    try {
+                                        const s3bucket = res.ARN.substring(res.ARN.lastIndexOf(':') + 1);
+                                        const cmd = `aws s3 cp s3://${s3bucket}/${downloadCandidate} --no-sign-request /tmp`;
+                                        console.log(cmd);
+                                        const output = await exec(cmd, { "shell": "/bin/bash" });
+                                        console.log(output);
+                                        downloadable = true;
+                                    } catch (error) {
+                                        console.warn(`Cannot download`)
+                                    }
+                                } else {
+                                    console.warn(`No download candidate`)
+                                }
+
                                 csvObjects.push({
                                     name: doc.Name,
                                     description: doc.Description,
                                     documentation: doc.Documentation,
                                     license: doc.License,
+                                    downloadable: downloadable,
                                     ARN: res.ARN,
                                     region: res.Region,
                                     numberOfFiles: countMatch[1],
