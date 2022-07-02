@@ -37,8 +37,8 @@ const filelineRegex = /\d{4}-\d{2}-\d{2}\s\S+\s+\S+\s\S+\s(.*)/;
                 const doc = yaml.load(fs.readFileSync(file.path, 'utf8'));
                 for (let i = 0; i < doc.Resources.length; i++) {
                     const res = doc.Resources[i];
-                    if (csvObjects.filter(function (e: any) { return e.name === doc.Name; }).length > 0) {
-                        console.warn(`Dataset ${doc.Name} already in CSV, continue`);
+                    if (csvObjects.filter(function (e: any) { return e.ARN === res.ARN; }).length > 0) {
+                        console.warn(`Dataset ${res.ARN} already in CSV, continue`);
                         continue;
                     }
                     try {
@@ -79,10 +79,11 @@ const filelineRegex = /\d{4}-\d{2}-\d{2}\s\S+\s+\S+\s\S+\s(.*)/;
                                     try {
                                         const s3bucket = res.ARN.substring(res.ARN.lastIndexOf(':') + 1);
                                         //process bucket like s3://aws-roda-hcls-datalake/thousandgenomes_dragen
-                                        const cmd = `aws s3 cp --no-sign-request --no-progress s3://${s3bucket.split('/')[0]}/${downloadCandidate} /tmp`;
+                                        const cmd = `aws s3 cp --no-sign-request --no-progress s3://${s3bucket.split('/')[0]}/${downloadCandidate} /tmp/awsopen/`;
                                         console.log(cmd);
-                                        const output = await exec(cmd, { "shell": "/bin/bash" });
+                                        const output = await exec(cmd);
                                         console.log(output);
+                                        await exec('rm -rf /tmp/awsopen/*');
                                         downloadable = true;
                                     } catch (error) {
                                         console.error(`Cannot download`, error)
