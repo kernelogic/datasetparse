@@ -82,7 +82,7 @@ const filelineRegex = /\d{4}-\d{2}-\d{2}\s\S+\s+\S+\s\S+\s(.*)/;
                                         const cmd = `aws s3 cp s3://${s3bucket.split('/')[0]}/${downloadCandidate} --no-sign-request /tmp`;
                                         console.log(cmd);
                                         const output = await exec(cmd, { "shell": "/bin/bash" });
-                                        console.log(output);
+                                        console.log(output.stderr);
                                         downloadable = true;
                                     } catch (error) {
                                         console.error(`Cannot download`, error)
