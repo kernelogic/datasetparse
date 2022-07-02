@@ -85,25 +85,30 @@ const filelineRegex = /\d{4}-\d{2}-\d{2}\s\S+\s+\S+\s\S+\s(.*)/;
                                         console.log(output);
                                         await exec('rm -rf /tmp/awsopen/*');
                                         downloadable = true;
-                                    } catch (error) {
+                                    } catch (error: any) {
                                         console.error(`Cannot download`, error)
+                                        if(error.message.indexOf('(404)') >= 0) {
+                                            downloadable = true; //still consider as downloadable because usually due to file changed
+                                        }
                                     }
-                                } else {
-                                    console.warn(`No download candidate`)
                                 }
 
-                                csvObjects.push({
-                                    name: doc.Name,
-                                    description: doc.Description,
-                                    documentation: doc.Documentation,
-                                    license: doc.License,
-                                    downloadable: downloadable,
-                                    ARN: res.ARN,
-                                    region: res.Region,
-                                    numberOfFiles: countMatch[1],
-                                    totalSize: sizeMatch[1],
-                                    extensions: extensions.size <= 10 ? Array.from(extensions).join(' ') : `various ${extensions.size}`
-                                })
+                                if(countMatch[1] > 0){
+                                    csvObjects.push({
+                                        name: doc.Name,
+                                        description: doc.Description,
+                                        documentation: doc.Documentation,
+                                        license: doc.License,
+                                        downloadable: downloadable,
+                                        ARN: res.ARN,
+                                        region: res.Region,
+                                        numberOfFiles: countMatch[1],
+                                        totalSize: sizeMatch[1],
+                                        extensions: extensions.size <= 10 ? Array.from(extensions).join(' ') : `various ${extensions.size}`
+                                    })
+                                } else {
+                                    console.warn(`Dataset has zero files. Continue.`)
+                                }
                             } else {
                                 console.error(`Incomplete txt file?`, output.stdout);
                                 continue;
