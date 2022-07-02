@@ -66,7 +66,7 @@ const filelineRegex = /\d{4}-\d{2}-\d{2}\s\S+\s+\S+\s\S+\s(.*)/;
                                         if (lineMatch != null && lineMatch.length > 1) {
                                             extensions.add(path.extname(lineMatch[1]))
                                             if (!downloadCandidate) {
-                                                downloadCandidate = lineMatch[1];
+                                                downloadCandidate = lineMatch[1].replaceAll(' ', '\\ ');
                                             }
                                         }
                                     }
